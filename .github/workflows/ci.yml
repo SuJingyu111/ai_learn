@@ -42,8 +42,14 @@ jobs:
       - name: Test
         run: ctest --test-dir build --output-on-failure
 
+      # Verifies the benchmark runs and emits well-formed, provenance-tagged
+      # output. A shared CI runner cannot produce performance evidence; the
+      # provenance header says so, and Orin remains the source of truth.
       - name: Smoke benchmark
-        run: ./build/resize_benchmark 2 | tee cpu-benchmark.csv
+        env:
+          CUDA_AI_COMMIT: ${{ github.sha }}
+          CUDA_AI_HOST: github-actions-${{ runner.os }}-${{ runner.arch }}-shared
+        run: ./build/resize_benchmark 30 | tee cpu-benchmark.csv
 
       - name: Upload benchmark artifact
         if: matrix.compiler == 'gcc'

@@ -224,6 +224,28 @@ for primary_file in primary_files:
         if re.search(pattern, source):
             ERRORS.append(f"{relative(primary_file)}: {label}")
 
+# Output directories the week files, docs/getting-started.md and
+# docs/mastery-gates.md require learners to write into. Week-numbered buckets
+# such as artifacts/week-33/ are created on demand and are not checked here.
+REQUIRED_DIRS = [
+    "notes/feed",
+    "notes/weekly",
+    "notes/problems",
+    "notes/gates",
+    "notes/curriculum",
+    "notes/concepts",
+    "notes/diagnostics",
+    "notes/daily",
+    "notes/ai-app",
+    "notes/templates",
+    "labs/ml",
+    "labs/resize_starter",
+    "artifacts/environment",
+]
+for required_dir in REQUIRED_DIRS:
+    if not (ROOT / required_dir).is_dir():
+        ERRORS.append(f"missing required output directory: {required_dir}/")
+
 if WARNINGS:
     print(f"Warnings ({len(WARNINGS)}):")
     for warning in WARNINGS:
