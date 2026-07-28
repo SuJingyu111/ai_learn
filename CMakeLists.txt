@@ -59,6 +59,12 @@ endif()
 add_executable(resize_benchmark benchmarks/benchmark_resize.cpp)
 target_link_libraries(resize_benchmark PRIVATE cuda_ai_cpu)
 cuda_ai_warnings(resize_benchmark)
+# docs/benchmark-methodology.md requires build type and compiler on every run.
+# The commit is passed at run time via CUDA_AI_COMMIT instead, so it cannot go
+# stale when the source is rebuilt without reconfiguring.
+target_compile_definitions(resize_benchmark PRIVATE
+  CUDA_AI_BUILD_TYPE="$<IF:$<BOOL:${CMAKE_BUILD_TYPE}>,${CMAKE_BUILD_TYPE},unspecified>"
+  CUDA_AI_COMPILER="${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
 enable_testing()
 add_executable(resize_tests tests/test_resize.cpp)
