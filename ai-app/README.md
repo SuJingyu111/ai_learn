@@ -25,11 +25,9 @@
 
 ## Build Order
 
-具体每日任务已经合并进 [`../weeks/`](../weeks/) 的当周文件；
-[`../AI_APP_TRACK.md`](../AI_APP_TRACK.md) 仅作为 48 周副线主题索引。
+具体每日任务已经合并进 [`../weeks/`](../weeks/) 的当周文件；A1–A8 的单元边界和
+每个单元的累计产品见 [`../AI_APP_TRACK.md`](../AI_APP_TRACK.md) 的八单元安排表。
 
-1. Week 1–16：agent/tool/MCP protocol foundations。
-2. Week 17–20：local read-only MCP server。
-3. Week 21–24：remote transport/auth/threat model。
-4. Week 25–40：memory/eval/multi-agent/guardrails。
-5. Week 41–48：GitHub integration、GH-600、capstone hardening。
+这里不重复周次映射：之前重复出来的一份已经和 A3/A4 的单元边界对不上了。
+需要知道「第几周做什么」时看 [`../weeks/README.md`](../weeks/README.md)，
+需要知道「哪个单元交付什么」时看 `AI_APP_TRACK.md`。
