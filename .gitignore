@@ -8,11 +8,12 @@ build*/
 *.so
 *.dylib
 *.exe
+# Large profiler traces stay out of the repository; raw benchmark CSV/JSON in
+# benchmark-results/ is tracked on purpose — it is the primary evidence that
+# docs/benchmark-methodology.md and the G8 hard blockers depend on.
 *.nsys-rep
 *.ncu-rep
 *.sqlite
-benchmark-results/*.json
-benchmark-results/*.csv
 notes/daily/*.md
 !notes/daily/.gitkeep
 __pycache__/

@@ -158,12 +158,14 @@ layout、precision、quantization、dynamic shape、fallback 和 correctness。
 ├── .github/                 # Repository instructions、reviewer、CPU CI
 ├── ai-app/                 # 后续 Runtime Lab Assistant MCP server
 ├── apps/                    # 示例与后续 capstone app
+├── artifacts/               # 环境 freeze、contract、model 与 Gate 证据
 ├── benchmarks/              # 可重复 benchmark
 ├── benchmark-results/       # 原始数据，不把 trace 当结论
 ├── course/                  # 8 个 Unit syllabus 与累计项目 contract
 ├── core-modules/            # 旧版 24 个 Runtime 深挖参考
 ├── docs/                    # 架构、方法、设计与资源
 ├── include/cuda_ai/         # 公共 C++/CUDA API
+├── labs/                    # 每周独立实现；resize_starter 是 G4 前隔离区
 ├── notes/                   # 每日、内容、实验、profiling、周复盘
 ├── scripts/                 # host/Orin build、test、profile 入口
 ├── src/cpu/                 # CPU correctness oracle
