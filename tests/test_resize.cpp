@@ -84,6 +84,25 @@ void test_invalid_input() {
   }
 }
 
+// Locks the nearest_mode documented in cuda_ai/resize.h. An exact 2x downscale
+// puts every destination pixel on a .5 tie, so this fails outright if the
+// rounding is ever changed to ONNX's default round_prefer_floor: that mode
+// would select source columns 0,2,4,6 instead of 1,3,5,7.
+void test_nearest_tie_rounds_up() {
+  cuda_ai_test::HostImage source(8, 1, 1);
+  for (int x = 0; x < 8; ++x) {
+    source.row(0)[x] = static_cast<float>(x);
+  }
+  cuda_ai_test::HostImage destination(4, 1, 1);
+  cuda_ai::resize_nearest_cpu(source.const_view(), destination.view());
+
+  const float expected[4] = {1.0F, 3.0F, 5.0F, 7.0F};
+  for (int x = 0; x < 4; ++x) {
+    expect_near(destination.at(0, x, 0), expected[x], 0.0F,
+                "nearest tie must round up (round_prefer_ceil)");
+  }
+}
+
 // A padded row stride must not change a single output value, and must not be
 // written through. This gives padded-stride coverage a real oracle without a
 // second implementation: the packed run is the reference for the padded run.
@@ -180,6 +199,7 @@ int main() {
     test_downscale_to_average();
     test_constant_multichannel_and_odd_size();
     test_nearest_known_values();
+    test_nearest_tie_rounds_up();
     test_invalid_input();
     test_padded_stride_matches_packed();
     test_randomized_stays_in_source_range();
