@@ -246,6 +246,118 @@ for required_dir in REQUIRED_DIRS:
     if not (ROOT / required_dir).is_dir():
         ERRORS.append(f"missing required output directory: {required_dir}/")
 
+
+# AGENTS.md holds the repository instructions; CLAUDE.md and
+# .github/copilot-instructions.md must stay pointers to it rather than copies
+# that drift apart. Their markdown links are already checked above; this checks
+# that they have not quietly grown back into full copies.
+AGENT_INSTRUCTION_POINTERS = ["CLAUDE.md", ".github/copilot-instructions.md"]
+MAXIMUM_POINTER_CHARACTERS = 1200
+if not (ROOT / "AGENTS.md").is_file():
+    ERRORS.append("missing AGENTS.md: the canonical repository instructions")
+for pointer_path in AGENT_INSTRUCTION_POINTERS:
+    pointer_file = ROOT / pointer_path
+    if not pointer_file.is_file():
+        ERRORS.append(f"missing agent instruction pointer: {pointer_path}")
+        continue
+    pointer_source = pointer_file.read_text(encoding="utf-8")
+    if "AGENTS.md" not in pointer_source:
+        ERRORS.append(f"{pointer_path}: does not point at AGENTS.md")
+    if len(pointer_source) > MAXIMUM_POINTER_CHARACTERS:
+        ERRORS.append(
+            f"{pointer_path}: {len(pointer_source)} characters; it should point "
+            f"at AGENTS.md, not restate it"
+        )
+
+
+# The Unit-to-week mapping is restated in several files, each as a view with
+# different columns. Different columns are fine; a different mapping is drift.
+# Canonically Unit n covers content weeks 6n-5 .. 6n.
+def canonical_weeks(unit: int) -> tuple[int, int]:
+    return (6 * unit - 5, 6 * unit)
+
+
+# (file, regex, group order) where the groups yield unit, first week, last week.
+UNIT_RANGE_SOURCES = [
+    ("CURRICULUM.md", r"^\|\s*U([1-8])\s*\|\s*(\d+)[–-](\d+)\s*\|", (0, 1, 2)),
+    ("LEARNING_PLAN.md", r"^\|\s*U([1-8])\s*\|\s*(\d+)[–-](\d+)\s*\|", (0, 1, 2)),
+    ("AI_APP_TRACK.md", r"^\|\s*A([1-8])\s*\|\s*(\d+)[–-](\d+)\s*\|", (0, 1, 2)),
+    ("course/README.md", r"^\|\s*([1-8])\s*\|\s*(\d+)[–-](\d+)\s*\|", (0, 1, 2)),
+    # YEAR_PLAN lists calendar weeks first, then content weeks, then the unit.
+    (
+        "YEAR_PLAN.md",
+        r"^\|[^|]*\|\s*W(\d+)[–-]W(\d+)\s*\|\s*U([1-8])\b",
+        (2, 0, 1),
+    ),
+]
+for relative_path, pattern, order in UNIT_RANGE_SOURCES:
+    source_file = ROOT / relative_path
+    if not source_file.exists():
+        ERRORS.append(f"missing unit-mapping source: {relative_path}")
+        continue
+    source = source_file.read_text(encoding="utf-8")
+    declared: dict[int, tuple[int, int]] = {}
+    for match in re.finditer(pattern, source, re.MULTILINE):
+        groups = match.groups()
+        unit = int(groups[order[0]])
+        declared[unit] = (int(groups[order[1]]), int(groups[order[2]]))
+    for unit in range(1, 9):
+        if unit not in declared:
+            ERRORS.append(f"{relative_path}: unit {unit} missing from the week mapping")
+        elif declared[unit] != canonical_weeks(unit):
+            ERRORS.append(
+                f"{relative_path}: unit {unit} declares weeks "
+                f"{declared[unit][0]}–{declared[unit][1]}, expected "
+                f"{canonical_weeks(unit)[0]}–{canonical_weeks(unit)[1]}"
+            )
+
+# weeks/README.md groups week links under "## Unit N" headings. Every week must
+# appear exactly once, under the unit that actually owns it.
+weeks_index = (ROOT / "weeks" / "README.md").read_text(encoding="utf-8")
+seen_weeks: dict[int, int] = {}
+current_unit = None
+for line in weeks_index.splitlines():
+    heading = re.match(r"^##\s*Unit\s*([1-8])\b", line)
+    if heading:
+        current_unit = int(heading.group(1))
+        continue
+    link = re.match(r"^\|\s*\[(\d{2})\]\(week-(\d{2})\.md\)", line)
+    if not link:
+        continue
+    week = int(link.group(1))
+    if link.group(1) != link.group(2):
+        ERRORS.append(
+            f"weeks/README.md: row label {link.group(1)} links to week-{link.group(2)}.md"
+        )
+    if week in seen_weeks:
+        ERRORS.append(f"weeks/README.md: week {week:02d} listed more than once")
+    seen_weeks[week] = current_unit if current_unit is not None else 0
+    first, last = canonical_weeks(current_unit) if current_unit else (0, 0)
+    if not first <= week <= last:
+        ERRORS.append(
+            f"weeks/README.md: week {week:02d} listed under Unit {current_unit}, "
+            f"which covers weeks {first}–{last}"
+        )
+for week in range(1, 49):
+    if week not in seen_weeks:
+        ERRORS.append(f"weeks/README.md: week {week:02d} is not listed")
+
+# Major Gate n is assessed in the last week of Unit n.
+gates_source = (ROOT / "docs" / "mastery-gates.md").read_text(encoding="utf-8")
+gate_weeks = {
+    int(match.group(1)): int(match.group(2))
+    for match in re.finditer(r"\bG([1-8])\s*/\s*W(\d+)\b", gates_source)
+}
+for unit in range(1, 9):
+    expected_gate_week = canonical_weeks(unit)[1]
+    if unit not in gate_weeks:
+        ERRORS.append(f"docs/mastery-gates.md: G{unit} missing from the unlock table")
+    elif gate_weeks[unit] != expected_gate_week:
+        ERRORS.append(
+            f"docs/mastery-gates.md: G{unit} is placed in W{gate_weeks[unit]}, "
+            f"expected W{expected_gate_week}"
+        )
+
 if WARNINGS:
     print(f"Warnings ({len(WARNINGS)}):")
     for warning in WARNINGS:
