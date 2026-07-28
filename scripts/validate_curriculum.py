@@ -247,6 +247,29 @@ for required_dir in REQUIRED_DIRS:
         ERRORS.append(f"missing required output directory: {required_dir}/")
 
 
+# AGENTS.md holds the repository instructions; CLAUDE.md and
+# .github/copilot-instructions.md must stay pointers to it rather than copies
+# that drift apart. Their markdown links are already checked above; this checks
+# that they have not quietly grown back into full copies.
+AGENT_INSTRUCTION_POINTERS = ["CLAUDE.md", ".github/copilot-instructions.md"]
+MAXIMUM_POINTER_CHARACTERS = 1200
+if not (ROOT / "AGENTS.md").is_file():
+    ERRORS.append("missing AGENTS.md: the canonical repository instructions")
+for pointer_path in AGENT_INSTRUCTION_POINTERS:
+    pointer_file = ROOT / pointer_path
+    if not pointer_file.is_file():
+        ERRORS.append(f"missing agent instruction pointer: {pointer_path}")
+        continue
+    pointer_source = pointer_file.read_text(encoding="utf-8")
+    if "AGENTS.md" not in pointer_source:
+        ERRORS.append(f"{pointer_path}: does not point at AGENTS.md")
+    if len(pointer_source) > MAXIMUM_POINTER_CHARACTERS:
+        ERRORS.append(
+            f"{pointer_path}: {len(pointer_source)} characters; it should point "
+            f"at AGENTS.md, not restate it"
+        )
+
+
 # The Unit-to-week mapping is restated in several files, each as a view with
 # different columns. Different columns are fine; a different mapping is drift.
 # Canonically Unit n covers content weeks 6n-5 .. 6n.

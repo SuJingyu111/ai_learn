@@ -155,7 +155,8 @@ layout、precision、quantization、dynamic shape、fallback 和 correctness。
 
 ```text
 .
-├── .github/                 # Repository instructions、reviewer、CPU CI
+├── AGENTS.md                # Agent 规则唯一事实源；CLAUDE.md 与 copilot 指向它
+├── .github/                 # reviewer、PR 模板、CPU CI 与 curriculum 校验
 ├── ai-app/                 # 后续 Runtime Lab Assistant MCP server
 ├── apps/                    # 示例与后续 capstone app
 ├── artifacts/               # 环境 freeze、contract、model 与 Gate 证据
