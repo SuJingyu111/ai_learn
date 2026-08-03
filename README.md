@@ -48,6 +48,10 @@ Phase 00–06 只需要一台能编译 C++17 的机器。**不需要 GPU，不�
 
 完整步骤见 [`STEPS.md`](STEPS.md)。
 
+Phase B 同时覆盖 **GH-600** 认证的六个 domain——六域 artifact 是它的副产物。
+自查清单见 [`docs/gh600-checklist.md`](docs/gh600-checklist.md)。
+考证与引擎能力是两个独立结论，互不解锁。
+
 ## 仓库结构
 
 ```text

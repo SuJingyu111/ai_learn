@@ -168,6 +168,11 @@ Phase 07 开始需要 NVIDIA GPU，Phase 10 需要 Jetson Orin。
 
 主题索引见 [`reference/AI_APP_TRACK.md`](reference/AI_APP_TRACK.md)。
 
+**GH-600 认证**（可选）：这条序列建出来的东西同时覆盖 GH-600 六个 domain。
+evidence 与 readiness 自查用 [`docs/gh600-checklist.md`](docs/gh600-checklist.md)，
+六域的 artifact 是 Phase B 的副产物，不是额外作业。**考不考证与引擎做得怎么样
+是两个独立结论**，两边不互相解锁。
+
 ---
 
 ## 里程碑
