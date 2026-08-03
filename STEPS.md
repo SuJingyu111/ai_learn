@@ -32,6 +32,9 @@ Phase 07 开始需要 NVIDIA GPU，Phase 10 需要 Jetson Orin。
 ./scripts/build_and_test.sh cpu     # 现在就该能跑通
 ```
 
+各 Phase 需要什么环境、什么时候才需要 GPU 和 Orin，见
+[`docs/getting-started.md`](docs/getting-started.md)。
+
 ---
 
 ## Phase 00 — Tensor
