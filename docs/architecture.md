@@ -1,91 +1,99 @@
 # Architecture
 
-## Target pipeline
+引擎的目标形态与它必须遵守的契约。步骤怎么走见 [`../STEPS.md`](../STEPS.md)；
+这里只写**结构**和**规则**，不写顺序。
+
+## 最终形态
 
 ```text
-Host/camera/synthetic input
-        |
-        +--> CPU/framework reference ------------------------------+
-        |                                                          |
-        +--> input buffer                                          |
-              -> CUDA resize / normalize / HWC->CHW                |
-              -> device tensor                                     |
-              -> ORT CUDA or TensorRT inference                    |
-              -> postprocess --------------------------------------+--> comparator
-                                                                        |
-                                                                        +--> report
+ONNX 文件
+  → 解析（你写的 protobuf reader）
+  → Graph IR：节点、初始值、拓扑序
+  → 内存规划：中间张量的复用与生命周期
+  → 执行
+      ├─ CPU backend（你写的算子，也是 CUDA 的 oracle）
+      └─ CUDA backend（device-resident，无隐藏 host 往返）
+  → 输出
+       │
+       └→ 对拍：numpy / onnxruntime / ORT CUDA / TensorRT
+       └→ 测量：latency 分位数 + 环境溯源 + power/thermal
 ```
 
-早期 milestone 允许 H2D/D2H 以便独立验证；最终 capstone 要求解释每次 host/device
-transition，并优先保持 preprocessing→inference 的 device-resident path。
+ORT 和 TensorRT 在右下角，**是参照物不是依赖**。引擎不调用它们；
+它只需要在同样的输入上给出同样的结果，并解释性能差距。
 
-项目不会等到最后才开始。M1 建立 normalize/layout CPU vertical slice，M2 冻结
-model/runtime-input 并建立 framework/ORT CPU oracle，M3 加入 CUDA tensor transforms，
-M4 学完并冻结 Resize semantics 后完成 CUDA preprocessor。M5 增加 multi-frame
-ownership，M6 接入 runtime，M7–M8 才进入 Orin sustained/release。完整依赖见
-[`../reference/course/project/milestones.md`](../reference/course/project/milestones.md)。
-
-## Layers
+## 分层
 
 ```text
-Application       frame scheduling, input/output semantics
-Runtime adapter   ORT/TensorRT session, engine, context, tensor binding
-Operator library  resize, normalize, layout conversion, warp
-CUDA runtime      streams, events, memory, graph capture
-Jetson Orin       GPU, memory subsystem, power/clock/thermal constraints
+CLI / 驱动      tt inspect / run / bench / dump
+图              Graph IR、拓扑序、内存规划
+算子            elementwise / matmul / conv / pool / softmax
+后端            CPU 参考实现；CUDA kernel
+Tensor          storage、shape、dtype、stride、offset
+平台            主机 CPU；NVIDIA GPU；Jetson Orin 的功耗/时钟/散热约束
 ```
+
+下层不知道上层存在。Tensor 不知道有图，算子不知道有 ONNX。
+每加一层都问一次：这层能不能单独测。
 
 ## Ownership
 
-- `ImageView` 是 non-owning view；调用方保证执行期间 memory 有效。
-- CPU API 同步返回。
-- CUDA operator 接收 stream；调用方拥有 stream 和 device buffers。
-- async enqueue 成功不表示 work 已完成。
-- event/stream 完成前不得释放或复用相关 buffers。
-- ORT/TensorRT adapter 必须说明 input/output tensor、execution context 和 stream 的
-  lifetime；第三方 runtime 的隐式同步不得靠猜测。
+- Tensor 是**非拥有视图 + 引用计数存储**：多个 Tensor 可指向同一块内存，
+  最后一个引用释放它。
+- CPU 算子同步返回。
+- CUDA 算子接收 stream，**不同步它**；调用方拥有 stream 和 device buffer。
+- async enqueue 成功**不表示** work 已完成。
+- event/stream 完成之前不得释放或复用相关 buffer。
+- 任何第三方 runtime 的隐式同步都不得靠猜测——查文档或实测。
 
 ## Correctness
 
-- CPU/NumPy/PyTorch reference 应简单、可读并独立于 CUDA implementation。
-- 固定 hand cases 锁定 coordinate/layout/operator semantics。
-- fixed-seed randomized tests 覆盖 odd、single-pixel、padded stride 和 boundaries。
-- precision/layout/backend 改变时重新运行 correctness gate。
-- tolerance 包含 absolute/relative 或任务相关指标，并说明数值来源。
+- CPU 参考实现应简单、可读，且**独立于**优化版本与 CUDA 版本。
+  它慢没关系，它的职责是「显然正确」。
+- 手算固定用例锁定 coordinate、layout 和算子语义。
+- fixed-seed 随机测试覆盖 odd、单像素、padded stride 和边界。
+- precision、layout 或 backend 改变时，重跑全部正确性测试。
+- tolerance 必须给出**数值来源**（累加次数 × eps、FMA 合并等），
+  不能是拍脑袋的 `1e-5`。见 [`../steps/phase-01-ops/step-023.md`](../steps/phase-01-ops/step-023.md)。
 
 ## Measurement boundaries
 
-报告按适用范围区分：
+报告时按适用范围分开，不要混成一个数：
 
-- model/engine build；
-- allocation/registration；
-- H2D/input preparation；
-- preprocessing kernels；
-- inference；
-- D2H/postprocess；
-- first-frame、steady-state 和 end-to-end；
-- throughput、memory、power/thermal。
+- 模型解析 / engine build；
+- allocation / registration；
+- H2D / 输入准备；
+- 单个算子 kernel；
+- 完整推理；
+- D2H / 后处理；
+- first-frame、steady-state、end-to-end；
+- throughput、memory 峰值、power/thermal。
 
-CUDA event、host clock、Nsight Systems 和 Nsight Compute 回答不同问题。优化不得
-改变 API/workload 语义或绕过 correctness tests。
+CUDA event、host clock、Nsight Systems 和 Nsight Compute 回答的是**不同问题**。
+优化不得改变 API 语义、workload 语义，或绕过正确性测试。
 
-## Evidence 与 Runtime Lab Assistant
+方法见 [`benchmark-methodology.md`](benchmark-methodology.md)。
+
+## Evidence
+
+每个值得保留的结论都要能追回到原始数据：
 
 ```text
-runtime execution
-  -> versioned manifest / correctness / raw latency / system metrics
-  -> fixed-schema artifact store
-  -> read-only MCP resources and tools
-  -> validate / compare / explain
-  -> human engineering decision
+commit + 环境 + workload
+  → 原始 samples / trace
+  → 解释
+  → 有范围限定的结论
 ```
 
-Assistant 不直接读取任意文件或控制设备。它只消费 allowlisted、versioned evidence；
-MCP output 仍视为 untrusted。最终 capability contract 在
-[`../reference/course/project/spec.md`](../reference/course/project/spec.md)。
+原始 CSV 进 `benchmark-results/`（**不被 gitignore，这是刻意的**）。
+分析写在 `notes/experiments/`。截图和 trace 不是结论。
 
-## Reference implementation boundary
+Phase B 的 MCP server 消费的就是这条链的产物——见 [`../ai-app/README.md`](../ai-app/README.md)。
 
-现有 CPU/CUDA Resize 源码是 reference，不是学生 starter。G4 前的 independent
-implementation 使用 `labs/resize_starter/`、个人 namespace 或隔离分支；通过 Gate 后
-才允许 differential review。否则 CPU oracle 与 CUDA practical 不能证明独立掌握。
+## 已存在的参考实现
+
+`engine/src/cpu/resize_cpu.cpp` 和 `engine/src/cuda/resize_cuda.cu` 是一个
+**已经写完**的前处理算子，带 CPU/CUDA parity 测试。它演示了这份文档要求的
+全部契约：非拥有视图、stream 契约、手算用例、padded stride 覆盖、tolerance 依据。
+
+写自己的算子时可以拿它当形状参照。Phase 07 会让你重写它的 CUDA 侧再做对比。

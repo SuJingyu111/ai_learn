@@ -17,6 +17,7 @@ Jetson Orin 上跑得快的推理引擎。
 跑通了就打开 [`STEPS.md`](STEPS.md)，从 Step 001 开始往下做。
 
 Phase 00–06 只需要一台能编译 C++17 的机器。**不需要 GPU，不需要 Orin。**
+各 Phase 分别需要什么环境见 [`docs/getting-started.md`](docs/getting-started.md)。
 
 ## 怎么运作
 
@@ -86,6 +87,10 @@ Phase 00–06 只需要一台能编译 C++17 的机器。**不需要 GPU，不�
 - 报告 median/p95 和原始数据，不只选择最好的一次。
 - Orin 数据记录 power mode、clocks、温度和是否发生 thermal throttling。
 - 优化失败或假设被推翻也是有效产出，不修改 workload 制造加速比。
+
+引擎必须遵守的接口契约（ownership、正确性、测量边界）见
+[`docs/architecture.md`](docs/architecture.md)；测量方法见
+[`docs/benchmark-methodology.md`](docs/benchmark-methodology.md)。
 
 完整规则见 [`AGENTS.md`](AGENTS.md)，它同时是所有 coding agent 的指令来源。
 

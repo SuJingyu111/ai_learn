@@ -14,7 +14,8 @@ material actions. Optimize for correctness, reproducible evidence, and clear
 explanations of tradeoffs.
 
 `STEPS.md` is the entry point and defines the order of work. Steps are written
-from code that already exists, never speculatively ahead of it.
+from code that already exists, never speculatively ahead of it. The engine's
+ownership, correctness and measurement contracts are in `docs/architecture.md`.
 
 ## Build and test
 
