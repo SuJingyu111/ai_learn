@@ -19,6 +19,12 @@ WARNINGS: list[str] = []
 
 SKIPPED_DIRS = {"build-cpu", "build-cuda", ".git", ".venv", "reference"}
 
+# reference/ is an archive of the previous course structure: its files link to
+# paths that structure defined and this one deleted, so it is skipped wholesale.
+# These two are not archive -- they are the maintained entry points into it, and
+# their links must resolve like any other.
+CHECKED_REFERENCE_FILES = ["reference/README.md", "reference/resources.md"]
+
 # Sections every step must carry. "跑起来" and "你应该看到" are the load-bearing
 # pair: a step without them cannot tell the reader whether they succeeded.
 REQUIRED_STEP_SECTIONS = ["你会做出", "跑起来", "你应该看到"]
@@ -198,6 +204,12 @@ markdown_files = [
     for path in ROOT.rglob("*.md")
     if not any(part in SKIPPED_DIRS for part in path.parts)
 ]
+for maintained in CHECKED_REFERENCE_FILES:
+    maintained_path = ROOT / maintained
+    if maintained_path.is_file():
+        markdown_files.append(maintained_path)
+    else:
+        ERRORS.append(f"missing maintained reference entry point: {maintained}")
 link_pattern = re.compile(r"!?\[[^\]]*]\(([^)\n]+)\)")
 for markdown_file in markdown_files:
     source = markdown_file.read_text(encoding="utf-8")
