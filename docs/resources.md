@@ -333,8 +333,9 @@ Registry/allowlist 不得被描述成可靠 security boundary；实际限制、e
 
 ## Optional Seminar：Podcast / Community / Blog
 
-详细复盘纪律见 [`learning-feed.md`](learning-feed.md)。每周最多 30–45 分钟，Core 落后时
-首先取消 seminar。
+Podcast/blog 是可选的，永远不承担先修，也不替代官方文档、代码正确性或 profiler
+证据。读到有价值的结论时，用 `claim → source/evidence → scope → experiment` 四段
+记在 `notes/experiments/` 下——没有可验证证据的就标注「仅观点」。
 
 - [Chip Huyen](https://huyenchip.com/)：ML systems / AI engineering。
 - [Lilian Weng](https://lilianweng.github.io/)：agent/tool/research overview。

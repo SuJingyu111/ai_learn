@@ -1,6 +1,6 @@
 # 开始前：Host、Jetson Orin 与实验基线
 
-先完成 [`../START_HERE.md`](../START_HERE.md) 的入学诊断。本文件建立设备与实验
+先完成 [`../STEPS.md`](../STEPS.md) 的入学诊断。本文件建立设备与实验
 环境，不替代 Python/math/GitHub prerequisite 检查。
 
 ## 1. 两个环境的职责

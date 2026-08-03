@@ -9,7 +9,7 @@ fi
 files=()
 while IFS= read -r file; do
   files+=("${file}")
-done < <(find apps benchmarks include src tests -type f \
+done < <(find engine -type f \
   \( -name '*.cpp' -o -name '*.h' -o -name '*.cu' \) -print)
 
 if ! clang-format --dry-run --Werror "${files[@]}"; then

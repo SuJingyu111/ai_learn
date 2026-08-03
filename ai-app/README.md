@@ -1,10 +1,10 @@
 # Runtime Lab Assistant
 
-这是 48 周 AI Application / MCP / GH-600 sidecar 的渐进式 capstone。
+引擎之外的第二条序列：把引擎产出的 benchmark artifacts 暴露为一个最小权限 MCP server。
 
 ## 最终范围
 
-将当前 CUDA/Orin 项目的稳定 artifacts 暴露为一个最小权限 MCP server：
+将引擎产出的稳定 artifacts 暴露为一个最小权限 MCP server：
 
 - resources：architecture、benchmark methodology、environment manifests；
 - read-only tools：list/validate/compare experiment results；
@@ -25,9 +25,7 @@
 
 ## Build Order
 
-具体每日任务已经合并进 [`../weeks/`](../weeks/) 的当周文件；A1–A8 的单元边界和
-每个单元的累计产品见 [`../AI_APP_TRACK.md`](../AI_APP_TRACK.md) 的八单元安排表。
+这是 **Phase B** 的产物，在 Phase 09 之后开始——那时引擎才有真实的 benchmark
+产物值得读取。步骤会在你走到那里时写出来。
 
-这里不重复周次映射：之前重复出来的一份已经和 A3/A4 的单元边界对不上了。
-需要知道「第几周做什么」时看 [`../weeks/README.md`](../weeks/README.md)，
-需要知道「哪个单元交付什么」时看 `AI_APP_TRACK.md`。
+主题索引见 [`../reference/AI_APP_TRACK.md`](../reference/AI_APP_TRACK.md)。
