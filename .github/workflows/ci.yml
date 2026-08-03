@@ -47,8 +47,8 @@ jobs:
       # provenance header says so, and Orin remains the source of truth.
       - name: Smoke benchmark
         env:
-          CUDA_AI_COMMIT: ${{ github.sha }}
-          CUDA_AI_HOST: github-actions-${{ runner.os }}-${{ runner.arch }}-shared
+          TT_COMMIT: ${{ github.sha }}
+          TT_HOST: github-actions-${{ runner.os }}-${{ runner.arch }}-shared
         run: ./build/resize_benchmark 30 | tee cpu-benchmark.csv
 
       - name: Upload benchmark artifact

@@ -9,9 +9,9 @@
 #include <string>
 #include <vector>
 
-#include "cuda_ai/image.h"
+#include "tt/image.h"
 
-namespace cuda_ai_test {
+namespace tt_test {
 
 // A host image whose row stride may exceed a packed row. The padding is filled
 // with a sentinel so a test can prove nothing wrote past the logical width.
@@ -29,17 +29,17 @@ struct HostImage {
       : width(image_width),
         height(image_height),
         channels(image_channels),
-        stride_elements(cuda_ai::packed_stride(image_width, image_channels) +
+        stride_elements(tt::packed_stride(image_width, image_channels) +
                         extra_stride_elements) {
     storage.assign(static_cast<std::size_t>(stride_elements) * image_height,
                    kPaddingSentinel);
   }
 
-  cuda_ai::ConstImageView const_view() const {
+  tt::ConstImageView const_view() const {
     return {storage.data(), width, height, channels, stride_elements};
   }
 
-  cuda_ai::ImageView view() {
+  tt::ImageView view() {
     return {storage.data(), width, height, channels, stride_elements};
   }
 
@@ -77,7 +77,7 @@ struct HostImage {
   // True when every element between the logical row end and the next row start
   // still holds the sentinel, i.e. the operation never wrote out of bounds.
   bool padding_intact() const {
-    const std::ptrdiff_t packed = cuda_ai::packed_stride(width, channels);
+    const std::ptrdiff_t packed = tt::packed_stride(width, channels);
     for (int y = 0; y < height; ++y) {
       const float* source = row(y);
       for (std::ptrdiff_t x = packed; x < stride_elements; ++x) {
@@ -123,4 +123,4 @@ inline void check(bool condition, const std::string& label) {
   }
 }
 
-}  // namespace cuda_ai_test
+}  // namespace tt_test

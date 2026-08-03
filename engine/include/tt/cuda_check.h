@@ -5,12 +5,12 @@
 #include <cstdlib>
 #include <iostream>
 
-#define CUDA_AI_CHECK(expression)                                          \
+#define TT_CUDA_CHECK(expression)                                          \
   do {                                                                     \
-    const cudaError_t cuda_ai_error = (expression);                        \
-    if (cuda_ai_error != cudaSuccess) {                                    \
+    const cudaError_t tt_cuda_error = (expression);                        \
+    if (tt_cuda_error != cudaSuccess) {                                    \
       std::cerr << "CUDA error at " << __FILE__ << ':' << __LINE__ << ": " \
-                << cudaGetErrorString(cuda_ai_error) << '\n';              \
+                << cudaGetErrorString(tt_cuda_error) << '\n';              \
       std::abort();                                                        \
     }                                                                      \
   } while (false)

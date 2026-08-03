@@ -21,7 +21,7 @@
 ```cmake
 add_executable(tt engine/apps/tt_main.cpp)
 target_include_directories(tt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
-cuda_ai_warnings(tt)
+tt_warnings(tt)
 ```
 
 ## 跑起来
@@ -49,5 +49,5 @@ exit=2
 
 ## 卡住了
 
-- `cuda_ai_warnings` 未定义 → 你把 `add_executable` 放在了那个 function 定义之前。
+- `tt_warnings` 未定义 → 你把 `add_executable` 放在了那个 function 定义之前。
 - 链接报错找不到 `main` → 检查文件确实被加进了 `add_executable`。

@@ -21,9 +21,9 @@ fi
 # Source identity for the evidence bundle. docs/mastery-gates.md makes
 # "evidence 无法关联 commit" a hard blocker, so record the dirty marker
 # explicitly instead of pretending the tree matched the commit.
-CUDA_AI_COMMIT="${CUDA_AI_COMMIT:-$(git describe --always --dirty --tags 2>/dev/null || echo unversioned)}"
-CUDA_AI_HOST="${CUDA_AI_HOST:-$(uname -srm)}"
-export CUDA_AI_COMMIT CUDA_AI_HOST
+TT_COMMIT="${TT_COMMIT:-$(git describe --always --dirty --tags 2>/dev/null || echo unversioned)}"
+TT_HOST="${TT_HOST:-$(uname -srm)}"
+export TT_COMMIT TT_HOST
 
 timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
 "./${build_dir}/resize_benchmark" "${iterations}" | \

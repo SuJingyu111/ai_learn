@@ -11,13 +11,13 @@
 #include <string>
 #include <vector>
 
-#include "cuda_ai/resize.h"
+#include "tt/resize.h"
 
-#ifndef CUDA_AI_BUILD_TYPE
-#define CUDA_AI_BUILD_TYPE "unknown"
+#ifndef TT_BUILD_TYPE
+#define TT_BUILD_TYPE "unknown"
 #endif
-#ifndef CUDA_AI_COMPILER
-#define CUDA_AI_COMPILER "unknown"
+#ifndef TT_COMPILER
+#define TT_COMPILER "unknown"
 #endif
 
 namespace {
@@ -74,9 +74,9 @@ std::string environment_or(const char* name, const char* fallback) {
 // reconfiguring, which would put a wrong sha next to real numbers.
 void print_provenance(int iterations) {
   std::cout << "# utc=" << utc_timestamp()
-            << " commit=" << environment_or("CUDA_AI_COMMIT", "unversioned")
-            << " host=" << environment_or("CUDA_AI_HOST", "unrecorded") << '\n'
-            << "# build_type=" << CUDA_AI_BUILD_TYPE << " compiler=" << CUDA_AI_COMPILER
+            << " commit=" << environment_or("TT_COMMIT", "unversioned")
+            << " host=" << environment_or("TT_HOST", "unrecorded") << '\n'
+            << "# build_type=" << TT_BUILD_TYPE << " compiler=" << TT_COMPILER
             << " timer=steady_clock\n"
             << "# warmup=" << kWarmUp << " iterations=" << iterations
             << " timed_region=resize_bilinear_cpu-only"
@@ -100,24 +100,23 @@ void run(const Case& benchmark_case, int iterations) {
   std::uniform_real_distribution<float> distribution(0.0F, 1.0F);
   std::generate(source.begin(), source.end(), [&] { return distribution(generator); });
 
-  const cuda_ai::ConstImageView source_view{
+  const tt::ConstImageView source_view{
       source.data(), benchmark_case.source_width, benchmark_case.source_height,
       benchmark_case.channels,
-      cuda_ai::packed_stride(benchmark_case.source_width, benchmark_case.channels)};
-  const cuda_ai::ImageView destination_view{
+      tt::packed_stride(benchmark_case.source_width, benchmark_case.channels)};
+  const tt::ImageView destination_view{
       destination.data(), benchmark_case.destination_width,
       benchmark_case.destination_height, benchmark_case.channels,
-      cuda_ai::packed_stride(benchmark_case.destination_width,
-                             benchmark_case.channels)};
+      tt::packed_stride(benchmark_case.destination_width, benchmark_case.channels)};
 
   for (int i = 0; i < kWarmUp; ++i) {
-    cuda_ai::resize_bilinear_cpu(source_view, destination_view);
+    tt::resize_bilinear_cpu(source_view, destination_view);
   }
   std::vector<double> milliseconds;
   milliseconds.reserve(static_cast<std::size_t>(iterations));
   for (int i = 0; i < iterations; ++i) {
     const auto start = std::chrono::steady_clock::now();
-    cuda_ai::resize_bilinear_cpu(source_view, destination_view);
+    tt::resize_bilinear_cpu(source_view, destination_view);
     const auto stop = std::chrono::steady_clock::now();
     milliseconds.push_back(
         std::chrono::duration<double, std::milli>(stop - start).count());

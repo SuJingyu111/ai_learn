@@ -2,9 +2,9 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "cuda_ai/resize.h"
+#include "tt/resize.h"
 
-namespace cuda_ai {
+namespace tt {
 namespace {
 
 void validate(ConstImageView source, ImageView destination) {
@@ -92,4 +92,4 @@ void resize_bilinear_cpu(ConstImageView source, ImageView destination) {
   }
 }
 
-}  // namespace cuda_ai
+}  // namespace tt

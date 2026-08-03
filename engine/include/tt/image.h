@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-namespace cuda_ai {
+namespace tt {
 
 struct ConstImageView {
   const float* data{nullptr};
@@ -24,4 +24,4 @@ inline std::ptrdiff_t packed_stride(int width, int channels) {
   return static_cast<std::ptrdiff_t>(width) * channels;
 }
 
-}  // namespace cuda_ai
+}  // namespace tt

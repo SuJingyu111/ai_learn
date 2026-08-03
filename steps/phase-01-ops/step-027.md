@@ -28,7 +28,7 @@
 
 ```bash
 cmake --build build-cpu --parallel
-CUDA_AI_COMMIT=$(git describe --always --dirty) ./build-cpu/tt bench matmul
+TT_COMMIT=$(git describe --always --dirty) ./build-cpu/tt bench matmul
 ```
 
 ## 你应该看到

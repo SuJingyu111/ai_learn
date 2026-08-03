@@ -1,8 +1,8 @@
 #pragma once
 
-#include "cuda_ai/image.h"
+#include "tt/image.h"
 
-namespace cuda_ai {
+namespace tt {
 
 // Resize contract shared by the CPU reference and the CUDA kernel, stated in
 // ONNX Resize terms because docs/mastery-gates.md makes an inconsistent border
@@ -39,4 +39,4 @@ namespace cuda_ai {
 void resize_nearest_cpu(ConstImageView source, ImageView destination);
 void resize_bilinear_cpu(ConstImageView source, ImageView destination);
 
-}  // namespace cuda_ai
+}  // namespace tt

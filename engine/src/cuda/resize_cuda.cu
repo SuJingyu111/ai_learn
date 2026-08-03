@@ -1,8 +1,8 @@
 #include <cuda_runtime.h>
 
-#include "cuda_ai/resize_cuda.h"
+#include "tt/resize_cuda.h"
 
-namespace cuda_ai {
+namespace tt {
 namespace {
 
 __device__ int clamp_index(int value, int upper_bound) {
@@ -71,4 +71,4 @@ cudaError_t resize_bilinear_cuda(ConstImageView source, ImageView destination,
   return cudaGetLastError();
 }
 
-}  // namespace cuda_ai
+}  // namespace tt

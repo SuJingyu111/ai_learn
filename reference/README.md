@@ -71,5 +71,9 @@
 
 ## 一句话提醒
 
-这些材料写于旧的课程结构，措辞里会出现 Unit、Week、Gate、Exit Ticket。
-**忽略那些框架词，只取其中的技术内容。**
+这些材料写于旧的课程结构，措辞里会出现 Unit、Week、Gate、Exit Ticket，
+**文件路径也大多过时**（`include/cuda_ai/`、`labs/`、`notes/feed/`、`artifacts/`
+都已经不存在或改名）。
+
+忽略那些框架词和路径，只取其中的技术内容。当前的路径以
+[`../STEPS.md`](../STEPS.md) 和 [`../README.md`](../README.md) 为准。
