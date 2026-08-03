@@ -64,9 +64,16 @@ Phase 00–06 只需要一台能编译 C++17 的机器。**不需要 GPU，不�
 └── ai-app/                  # Phase B 的 MCP server
 ```
 
-[`reference/`](reference/) 是**按需查阅**的资料库——48 周课程版本的全部内容都在
-那里，包括 8 个 Unit 的 syllabus 和 24 个 Core Module。步骤里需要理论时会直接
-给链接，不要求通读。
+## 缺理论的时候去哪
+
+| 你的问题 | 去哪 |
+|---|---|
+| 「stride 到底是什么」 | [`reference/README.md`](reference/README.md) — 概念索引，直接指到对应模块 |
+| 「Phase 07 之前该读什么」 | [`reference/resources.md`](reference/resources.md) — 按 Phase 组织的外部资料 |
+| 「我想一直跟踪这个领域」 | [`docs/feed.md`](docs/feed.md) — 渠道与纪律 |
+
+[`reference/`](reference/) 是 48 周课程版本的全部内容（8 个 Unit syllabus、
+24 个 Core Module、48 个周文件），降级为**按需查阅**，不定义顺序、不要求通读。
 
 ## 工程纪律
 

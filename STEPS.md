@@ -17,7 +17,11 @@ GPU 和 Jetson Orin 上跑得快的推理引擎。
 假设 → 测什么 → 你可能会发现 → 为什么。跳过它不会让你在后面任何一步卡住。
 
 需要理论时步骤里会直接给链接，指向 [`reference/`](reference/)。那里是按需查阅的
-资料库，不定义顺序，不要求通读。
+资料库，不定义顺序，不要求通读：
+
+- 卡在某个概念上 → [`reference/README.md`](reference/README.md) 的概念索引
+- 想知道某个 Phase 该读什么 → [`reference/resources.md`](reference/resources.md)
+- 想持续跟踪这个领域 → [`docs/feed.md`](docs/feed.md)（建议 Phase 04 之后再开始）
 
 ## 你需要什么
 

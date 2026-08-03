@@ -1,4 +1,4 @@
-# Course Pack：按先修顺序学习的资料主线
+# 资料索引：按 Phase 查，不必通读
 
 核对日期：**2026-07-26**。本文件不是“有空看看”的链接收藏，而是课程规定的学习
 顺序。每周文件会直接列出当周页面、章节和分钟；这里解释每个资源承担什么教学职责。
@@ -22,7 +22,7 @@
 
 只保存摘要或划线不算完成。
 
-## Course 0 — Python、数学、GitHub
+## 预备 — Python、数学、Git
 
 ### Python / array / math
 
@@ -49,9 +49,9 @@
   [Secure use](https://docs.github.com/en/actions/reference/security/secure-use)、
   [Script injections](https://docs.github.com/en/actions/concepts/security/script-injections)。
 
-## Unit 1 — Tensor、MatMul、Conv 与 Inference Boundary
+## Phase 00–01 — Tensor、MatMul、Conv 与数值
 
-### W1–W2：storage、stride、view/copy
+### Phase 00：storage、stride、view/copy
 
 - **Course** — [PyTorch Tensors tutorial](https://docs.pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html)：
   Initializing a Tensor、Attributes、Operations、Bridge with NumPy。
@@ -71,7 +71,7 @@ element_offset = storage_offset + Σ(index[d] × stride[d])
 byte_offset    = element_offset × itemsize
 ```
 
-### W3–W5：MatMul、Conv、operator/dataflow、数值
+### Phase 01 / 04：MatMul、Conv、operator dataflow、数值
 
 - **Textbook** — D2L Linear Algebra 的 dot products、matrix-vector、matrix-matrix。
 - **Course** — [CS231n: Convolutional Networks](https://cs231n.github.io/convolutional-networks/)：
@@ -87,9 +87,9 @@ byte_offset    = element_offset × itemsize
 - **Guided reference** — [PyTorch Profiler recipe](https://docs.pytorch.org/tutorials/recipes/recipes/profiler_recipe.html)：
   shape、CPU/CUDA time、memory；本单元只用于观察 operator dataflow。
 
-## Unit 2 — Model Lifecycle、ONNX、ORT CPU
+## Phase 03 / 05 — 模型格式、ONNX、ORT 对拍
 
-### W7–W8：Module/state/autograd
+### 背景：Module/state/autograd（了解即可）
 
 - **Course** — [PyTorch Learn the Basics](https://docs.pytorch.org/tutorials/beginner/basics/)：
   Build Model、Autograd、Optimization Loop。
@@ -102,7 +102,7 @@ byte_offset    = element_offset × itemsize
 重点问题：`eval()` 为什么不等于禁止 autograd；runtime 学习者为什么仍需理解一次
 training loop。
 
-### W9：ONNX IR/export
+### Phase 03：ONNX IR / export
 
 - **Course** — [Export a PyTorch model to ONNX](https://docs.pytorch.org/tutorials/beginner/onnx/export_simple_model_to_onnx_tutorial.html)。
 - **Reference** — [`torch.onnx`](https://docs.pytorch.org/docs/stable/onnx.html)：
@@ -112,15 +112,15 @@ training loop。
 - **Guided lab** — [ONNX Python API Introduction](https://onnx.ai/onnx/intro/python.html)：
   checker、shape inference、graph inspection。
 
-### W10–W12：ORT CPU/correctness/measurement
+### Phase 05：ORT CPU 对拍、correctness、measurement
 
 - **Course** — [ORT API Basics](https://onnxruntime.ai/docs/tutorials/api-basics.html)。
 - **Reference** — [ORT Python API Summary](https://onnxruntime.ai/docs/api/python/api_summary.html)：
   load/run、metadata、SessionOptions、profiling。
-- **Method** — [`benchmark-methodology.md`](benchmark-methodology.md)：
+- **Method** — [`benchmark-methodology.md`](../docs/benchmark-methodology.md)：
   environment、warm-up、raw samples、median/p95、correctness。
 
-## Unit 3 — CUDA Foundations
+## Phase 07 — CUDA 基础
 
 ### 连续教材
 
@@ -130,21 +130,21 @@ training loop。
 - **Course/Reference** — [CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-programming-guide/)：
   新版 guided Parts 1–3；不要再用旧 `cuda-c-programming-guide` 作为课程入口。
 
-### W13–W14：programming model/SIMT
+### programming model / SIMT
 
 - [Programming Model](https://docs.nvidia.com/cuda/cuda-programming-guide/01-introduction/programming-model.html)
 - [Introduction to CUDA C++](https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/intro-to-cuda-cpp.html)
 - [An Even Easier Introduction to CUDA](https://developer.nvidia.com/blog/even-easier-introduction-cuda/)：
   guided first kernel，不承担完整理论。
 
-### W15–W16：memory/coalescing/shared memory
+### memory / coalescing / shared memory
 
 - [CUDA Best Practices](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html)：
   §9.2 Bandwidth、§9.2.2 Effective Bandwidth、§10.2.1 Coalesced Global Memory、
   §10.2.3 Shared Memory/Bank Conflicts、§10.2.3.2 Shared-memory MatMul。
 - CUDA Programming Guide：Writing SIMT Kernels、Writing Tile Kernels。
 
-### W17–W18：async errors/timing/sanitizer
+### async errors / timing / sanitizer
 
 - [Asynchronous Execution](https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/asynchronous-execution.html)：
   §2.5.1–2.5.3、§2.5.4.2 asynchronous errors。
@@ -152,9 +152,9 @@ training loop。
 - [Compute Sanitizer](https://docs.nvidia.com/cuda/compute-sanitizer/index.html)：
   Overview、memcheck、racecheck、initcheck、synccheck。
 
-## Unit 4 — Profiling 与 Resize Preprocessor
+## Phase 06–07 — Profiling 与算子优化
 
-### W19–W20：measurement/profiling
+### measurement / profiling
 
 - [Nsight Systems User Guide](https://docs.nvidia.com/nsight-systems/UserGuide/index.html)：
   Basic CUDA Trace、`nsys profile`、CLI Stats、CUDA timeline。
@@ -167,7 +167,7 @@ training loop。
 课程顺序是 memory/coalescing/shared memory 之后再谈 occupancy；牢记“更高 occupancy
 不等于更快”。Systems 先定位阶段，Compute 再分析 candidate kernel。
 
-### W21–W24：Resize semantics→oracle→CUDA→case study
+### 采样算子语义 → oracle → CUDA → case study
 
 - **Semantic source** — [ONNX Resize specification](https://onnx.ai/onnx/operators/onnx__Resize.html)：
   `half_pixel`、`asymmetric`、`align_corners`、nearest mode、rounding、antialias。
@@ -178,9 +178,9 @@ training loop。
 写 CUDA 前必须冻结 coordinate transform、pixel center、inverse mapping、border、
 rounding、dtype 和 tolerance。
 
-## Unit 5 — Streams、Ownership 与 Multi-frame Pipeline
+## Phase 08 — Streams、Ownership 与流水线
 
-### W25–W30
+### streams / events / pinned memory / lifetime
 
 - CUDA Programming Guide Asynchronous Execution：Streams、Events、Ordering、Default Stream。
 - CUDA Best Practices §10.1.1 Pinned Memory、§10.1.2 Async/Overlap、§10.1.3 Zero Copy。
@@ -197,9 +197,9 @@ Affine/GridSample 不再是 Core milestone。若最终 camera/use case 明确需
 - OpenCV `warpAffine`/`remap`
 - MML §2.7 Linear Mappings、§2.8 Affine Spaces
 
-## Unit 6 — ORT CUDA 与 TensorRT
+## Phase 09 — ORT CUDA 与 TensorRT
 
-### W31–W32：ORT CUDA
+### ORT CUDA
 
 - [Execution Providers](https://onnxruntime.ai/docs/execution-providers/)：
   provider partition、priority、fallback。
@@ -208,7 +208,7 @@ Affine/GridSample 不再是 Core milestone。若最终 camera/use case 明确需
 - [I/O Binding](https://onnxruntime.ai/docs/performance/tune-performance/iobinding.html)。
 - ORT Python API Summary：Data on Device、OrtValue、IOBinding。
 
-### W33–W36：TensorRT 与 direct-device integration
+### TensorRT 与 device integration
 
 **版本规则**：先记录实际 JetPack/CUDA/cuDNN/TensorRT，再选择匹配 archive。课程链接指向
 [TensorRT 10.x documentation](https://docs.nvidia.com/deeplearning/tensorrt/10.x.x/)；
@@ -230,7 +230,7 @@ Affine/GridSample 不再是 Core milestone。若最终 camera/use case 明确需
 - [Dynamic Shapes](https://docs.nvidia.com/deeplearning/tensorrt/10.x.x/inference-library/work-dynamic-shapes.html)：
   runtime dimensions、min/opt/max profile、input shape。
 
-## Unit 7 — Orin、Power/Thermal 与 Reliability
+## Phase 10 — Orin、Power/Thermal 与 Reliability
 
 ### 平台版本
 
@@ -253,7 +253,7 @@ Affine/GridSample 不再是 Core milestone。若最终 camera/use case 明确需
 完整 INT8 calibration、DLA、plugin 是 elective；Core 先完成 FP32/FP16/dynamic 和
 device-resident correctness。
 
-## Unit 8 — Release、Security、GH-600
+## Phase B — Release、Security、GH-600
 
 ### GitHub Agentic AI / GH-600
 
@@ -273,20 +273,20 @@ device-resident correctness。
 GH-600 readiness 每次都重新核对考纲。自编 timed mock 必须标注非官方；exam sandbox
 只用于熟悉 UI。
 
-## Agent/MCP 副线完整教学顺序
+## Phase B — Agent/MCP 顺序
 
-### U1：GitHub control plane 与 agent fundamentals
+### B 阶段 1：GitHub control plane 与 agent fundamentals
 
 Git/GitHub/Actions 课程 → Foundations module → architecture/trust boundaries。没有 repository、
 branch、PR、checks 和 governance 基础，不进入 custom agent。
 
-### U2：agent architecture、typed tools 与 safe execution
+### B 阶段 2：agent architecture、typed tools 与 safe execution
 
 - [Design agent architecture and SDLC integration](https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/)
 - [Agent tooling, MCP, and execution environments](https://learn.microsoft.com/en-us/training/modules/agent-tooling-mcp-execution-environments/)
 - GitHub Actions token/security references。
 
-### U3：MCP protocol 与 stdio
+### B 阶段 3：MCP protocol 与 stdio
 
 统一记录 stable revision **2025-11-25**：
 
@@ -297,7 +297,7 @@ branch、PR、checks 和 governance 基础，不进入 custom agent。
 - [Resources](https://modelcontextprotocol.io/specification/2025-11-25/server/resources)
 - [Prompts](https://modelcontextprotocol.io/specification/2025-11-25/server/prompts)
 
-### U4：server、Inspector、HTTP/auth/security
+### B 阶段 4：server、Inspector、HTTP/auth/security
 
 - [Build an MCP server](https://modelcontextprotocol.io/docs/develop/build-server)
 - [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector)
@@ -307,7 +307,7 @@ branch、PR、checks 和 governance 基础，不进入 custom agent。
 
 顺序必须是 local read-only server 正确后，再进入 HTTP/auth/deploy。
 
-### U5–U6：memory/eval/multi-agent
+### B 阶段 5：memory/eval/multi-agent
 
 以本地、可重复的 artifact store/state machine/eval fixtures 为 mandatory：
 
@@ -319,7 +319,7 @@ branch、PR、checks 和 governance 基础，不进入 custom agent。
 [GitHub Models evaluation](https://docs.github.com/en/github-models/use-github-models/evaluating-ai-models)
 若仍为 preview，只作产品案例/elective，不能代替通用机制和本地 harness。
 
-### U7–U8：guardrails、GitHub integration、production
+### B 阶段 6：guardrails、GitHub integration、production
 
 - [Set up GitHub MCP Server](https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/set-up-the-github-mcp-server)
 - [Configure GitHub MCP toolsets](https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/configure-toolsets)
@@ -331,11 +331,9 @@ branch、PR、checks 和 governance 基础，不进入 custom agent。
 Registry/allowlist 不得被描述成可靠 security boundary；实际限制、entitlement 和绕过风险
 必须写入 threat model。
 
-## Optional Seminar：Podcast / Community / Blog
+## 持续跟踪
 
-Podcast/blog 是可选的，永远不承担先修，也不替代官方文档、代码正确性或 profiler
-证据。读到有价值的结论时，用 `claim → source/evidence → scope → experiment` 四段
-记在 `notes/experiments/` 下——没有可验证证据的就标注「仅观点」。
+渠道、纪律和"怎么把输入变成产出"见 [`../docs/feed.md`](../docs/feed.md)。
 
 - [Chip Huyen](https://huyenchip.com/)：ML systems / AI engineering。
 - [Lilian Weng](https://lilianweng.github.io/)：agent/tool/research overview。
