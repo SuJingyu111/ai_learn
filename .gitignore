@@ -19,3 +19,9 @@ notes/daily/*.md
 __pycache__/
 *.pyc
 .venv*/
+
+# Model files are fetched, not committed; see scripts/fetch_models.sh
+models/*.onnx
+models/*.bin
+models/*.npy
+*.tt

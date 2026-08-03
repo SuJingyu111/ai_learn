@@ -23,7 +23,7 @@ transition，并优先保持 preprocessing→inference 的 device-resident path�
 model/runtime-input 并建立 framework/ORT CPU oracle，M3 加入 CUDA tensor transforms，
 M4 学完并冻结 Resize semantics 后完成 CUDA preprocessor。M5 增加 multi-frame
 ownership，M6 接入 runtime，M7–M8 才进入 Orin sustained/release。完整依赖见
-[`../course/project/milestones.md`](../course/project/milestones.md)。
+[`../reference/course/project/milestones.md`](../reference/course/project/milestones.md)。
 
 ## Layers
 
@@ -82,7 +82,7 @@ runtime execution
 
 Assistant 不直接读取任意文件或控制设备。它只消费 allowlisted、versioned evidence；
 MCP output 仍视为 untrusted。最终 capability contract 在
-[`../course/project/spec.md`](../course/project/spec.md)。
+[`../reference/course/project/spec.md`](../reference/course/project/spec.md)。
 
 ## Reference implementation boundary
 
