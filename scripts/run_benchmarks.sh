@@ -23,7 +23,18 @@ fi
 # explicitly instead of pretending the tree matched the commit.
 TT_COMMIT="${TT_COMMIT:-$(git describe --always --dirty --tags 2>/dev/null || echo unversioned)}"
 TT_HOST="${TT_HOST:-$(uname -srm)}"
-export TT_COMMIT TT_HOST
+# The CPU model is the single most important fact about a CPU benchmark, and
+# uname does not carry it. Platform-specific, so the script supplies it.
+if [[ -z "${TT_CPU:-}" ]]; then
+  if command -v sysctl >/dev/null 2>&1 && sysctl -n machdep.cpu.brand_string >/dev/null 2>&1; then
+    TT_CPU="$(sysctl -n machdep.cpu.brand_string)"
+  elif [[ -r /proc/cpuinfo ]]; then
+    TT_CPU="$(awk -F': ' '/^model name/ {print $2; exit}' /proc/cpuinfo)"
+  else
+    TT_CPU="unrecorded"
+  fi
+fi
+export TT_COMMIT TT_HOST TT_CPU
 
 timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
 "./${build_dir}/resize_benchmark" "${iterations}" | \

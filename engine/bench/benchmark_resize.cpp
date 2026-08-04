@@ -19,6 +19,9 @@
 #ifndef TT_COMPILER
 #define TT_COMPILER "unknown"
 #endif
+#ifndef TT_FLAGS
+#define TT_FLAGS "unknown"
+#endif
 
 namespace {
 
@@ -76,8 +79,14 @@ void print_provenance(int iterations) {
   std::cout << "# utc=" << utc_timestamp()
             << " commit=" << environment_or("TT_COMMIT", "unversioned")
             << " host=" << environment_or("TT_HOST", "unrecorded") << '\n'
+            << "# cpu=" << environment_or("TT_CPU", "unrecorded") << '\n'
             << "# build_type=" << TT_BUILD_TYPE << " compiler=" << TT_COMPILER
             << " timer=steady_clock\n"
+            << "# flags=" << TT_FLAGS << '\n'
+            // A resize timing is meaningless without the semantics it ran, and
+            // this contract is what docs/architecture.md and tt/resize.h pin down.
+            << "# op=resize_bilinear coord=half_pixel border=clamp"
+            << " dtype=f32 layout=interleaved\n"
             << "# warmup=" << kWarmUp << " iterations=" << iterations
             << " timed_region=resize_bilinear_cpu-only"
             << " validation=outside-timed-region\n";

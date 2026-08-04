@@ -62,9 +62,11 @@ tt_warnings(resize_benchmark)
 # docs/benchmark-methodology.md requires build type and compiler on every run.
 # The commit is passed at run time via TT_COMMIT instead, so it cannot go
 # stale when the source is rebuilt without reconfiguring.
+string(TOUPPER "${CMAKE_BUILD_TYPE}" TT_BUILD_TYPE_UPPER)
 target_compile_definitions(resize_benchmark PRIVATE
   TT_BUILD_TYPE="$<IF:$<BOOL:${CMAKE_BUILD_TYPE}>,${CMAKE_BUILD_TYPE},unspecified>"
-  TT_COMPILER="${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+  TT_COMPILER="${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}"
+  TT_FLAGS="${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${TT_BUILD_TYPE_UPPER}}")
 
 enable_testing()
 add_executable(resize_tests engine/tests/test_resize.cpp)

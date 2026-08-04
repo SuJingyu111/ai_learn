@@ -2,12 +2,25 @@
 
 ## 必填环境
 
-- 日期、Git commit（或明确标记 unversioned/dirty）、主机和 OS
-- Orin 型号、内存、JetPack/L4T
+每次 run 都要有：
+
+- 日期、Git commit（或明确标记 `unversioned`/`dirty`）、主机和 OS
+- **CPU 型号**、RAM
+- build type、compiler、**实际生效的 flags**（不是"Release"三个字）
+
+跑在 GPU 上时追加：
+
 - GPU、compute capability、CUDA、TensorRT、cuDNN
-- CPU、RAM、power mode、clock policy
+
+跑在 Orin 上时再追加：
+
+- Orin 型号、内存、JetPack/L4T
+- power mode、clock policy
 - benchmark 前后温度、thermal throttling 和后台负载
-- build type、compiler、关键 flags
+
+`engine/bench/benchmark_resize.cpp` 是照这份清单实现的参照：commit 和 CPU 型号
+走环境变量（`TT_COMMIT`/`TT_CPU`，由 `scripts/run_benchmarks.sh` 填），
+build type、compiler 和 flags 由 CMake 在编译期注入。
 
 ## 必填工作负载
 
