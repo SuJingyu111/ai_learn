@@ -12,7 +12,7 @@
 它输出 `# utc= commit= host= build_type= compiler=` 的溯源头，
 分位数用 nearest-rank，样本数不足 20 时 p95 直接输出 `NA` 而不是编一个数。
 
-规则见 [reference/benchmark-methodology](../../docs/benchmark-methodology.md)。
+规则见 [`docs/benchmark-methodology.md`](../../docs/benchmark-methodology.md)。
 
 ## 动手
 
