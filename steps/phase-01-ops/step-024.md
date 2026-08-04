@@ -24,13 +24,19 @@ cmake --build build-cpu --parallel
 
 ## 你应该看到
 
+**PASS 是逐位要求；误差和耗时是量级要求**（取决于你的实现和 seed）：
+
 ```
 gen A(128,256) seed=42 -> /tmp/A.tt
 gen B(256,64)  seed=43 -> /tmp/B.tt
-tt matmul     -> /tmp/C_mine.tt   (2.14 ms)
+tt matmul     -> /tmp/C_mine.tt   (耗时视机器而定)
 numpy matmul  -> /tmp/C_numpy.tt
-allclose(rtol=1e-5, atol=1e-6): PASS   max_abs=6.10e-05 max_rel=2.8e-07
+allclose(rtol=1e-5, atol=1e-6): PASS   max_abs≈5e-05 max_rel≈8e-07
 ```
+
+K=256，按 Step 023 的模型 `sqrt(256) × eps ≈ 1.9e-06`，实测相对误差应该落在
+它的 0.2–0.5 倍，也就是 `1e-06` 上下。**差一个数量级以上就要查**，
+不要因为"反正 PASS 了"放过——那说明你对误差来源的理解和实际不符。
 
 ## 卡住了
 

@@ -26,18 +26,22 @@ cmake --build build-cpu --parallel
 存进去和读出来的元数据与前 8 个值完全一致：
 
 ```
-saved  shape=(2,3,4) dtype=f32 -> /tmp/a.tt (128 bytes)
+saved  shape=(2,3,4) dtype=f32 -> /tmp/a.tt (136 bytes)
 loaded shape=(2,3,4) dtype=f32 values: 0 1 2 3 4 5 6 7 ...
 ```
 
-128 = 头部 32 字节 + 数据 96 字节。**如果你的头部大小不同，把这个数字改成你的。**
+按上面的格式算：头部 `4 + 4 + 4 + 4 + 8×3 = 40` 字节，数据 `24 × 4 = 96` 字节，
+合计 **136**。注意头部大小**随 rank 变化**（dims 是 `8 × rank`），
+不是常数——这一点在写 reader 时容易搞错。
 
-用 Python 确认格式确实是通用的：
+**如果你改了格式，把这两个数字换成你自己算出来的。**
+
+用 Python 确认格式确实是通用的（`offset` 就是你的头部大小）：
 
 ```bash
 python3 -c "
 import numpy as np
-print(np.fromfile('/tmp/a.tt', dtype=np.float32, offset=32)[:8])"
+print(np.fromfile('/tmp/a.tt', dtype=np.float32, offset=40)[:8])"
 ```
 
 ```
