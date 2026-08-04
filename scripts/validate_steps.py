@@ -194,6 +194,45 @@ else:
         if has_goal and not marked:
             ERRORS.append(f"STEPS.md: step {row.group(1)} has an additional goal but is not marked 🎯")
 
+    # Phases that are not written yet declare a range like "028–036" instead of
+    # links. Written steps and declared ranges together must cover one
+    # contiguous span: a gap means a phase can never be written into it, and an
+    # overlap means a number belongs to two phases at once. This is what keeps
+    # the arc honest while most of it is still only titles.
+    declared_ranges = [
+        (int(first), int(last))
+        for first, last in re.findall(r"\|\s*(\d{3})[–-](\d{3})\s*\|", index_source)
+    ]
+    declared_numbers: dict[int, tuple[int, int]] = {}
+    for first, last in declared_ranges:
+        if first > last:
+            ERRORS.append(f"STEPS.md: declared range {first:03d}–{last:03d} runs backwards")
+            continue
+        for number in range(first, last + 1):
+            if number in declared_numbers:
+                ERRORS.append(
+                    f"STEPS.md: step {number:03d} falls in two declared ranges, "
+                    f"{declared_numbers[number][0]:03d}–{declared_numbers[number][1]:03d} "
+                    f"and {first:03d}–{last:03d}"
+                )
+            declared_numbers[number] = (first, last)
+
+    for number in sorted(set(listed) & set(declared_numbers)):
+        first, last = declared_numbers[number]
+        ERRORS.append(
+            f"STEPS.md: step {number:03d} is both written and inside the declared "
+            f"range {first:03d}–{last:03d}; remove it from the range"
+        )
+
+    covered = set(listed) | set(declared_numbers)
+    if covered:
+        span = range(min(covered), max(covered) + 1)
+        for number in (n for n in span if n not in covered):
+            ERRORS.append(
+                f"STEPS.md: step {number:03d} is in neither a written step nor a "
+                f"declared range, leaving a hole in the arc"
+            )
+
 for phase_dir in sorted(ROOT.glob("steps/phase-*")):
     if not (phase_dir / "README.md").is_file():
         ERRORS.append(f"{relative(phase_dir)}: missing README.md")
@@ -229,6 +268,24 @@ for markdown_file in markdown_files:
             WARNINGS.append(f"{relative(markdown_file)}: cannot decode local link {target}")
         if not (markdown_file.parent / target).resolve().exists():
             ERRORS.append(f"{relative(markdown_file)}: broken local link {original_target}")
+
+# ------------------------------------------------------- docs/ reachability --
+# docs/gh600-checklist.md was deleted during a restructure and nobody noticed,
+# because its only inbound links lived in reference/, which is skipped. An
+# archive can keep a file looking referenced while it is actually unreachable
+# from the live structure. Every doc must be linked from somewhere live.
+live_link_text = "\n".join(
+    path.read_text(encoding="utf-8")
+    for path in markdown_files
+    if path.name != "README.md" or path.parent != ROOT / "docs"
+)
+for doc in sorted(ROOT.glob("docs/*.md")):
+    if re.search(r"]\([^)]*" + re.escape(doc.name), live_link_text):
+        continue
+    ERRORS.append(
+        f"{relative(doc)}: not linked from any live document; it is reachable "
+        f"only from reference/, which means deleting it would go unnoticed"
+    )
 
 # --------------------------------------------------------------- stale URLs --
 STALE_PATTERNS = [
