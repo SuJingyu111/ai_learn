@@ -16,7 +16,9 @@ Jetson Orin 上跑得快的推理引擎。
 
 跑通了就打开 [`STEPS.md`](STEPS.md)，从 Step 001 开始往下做。
 
-Phase 00–06 只需要一台能编译 C++17 的机器。**不需要 GPU，不需要 Orin。**
+Phase 00–06 在一台普通开发机上就能做完：C++17 编译器与 CMake，
+外加 Python（Step 024 起用 numpy 对拍，Phase 05 起用 onnxruntime）。
+**不需要 GPU，不需要 Orin。**
 各 Phase 分别需要什么环境见 [`docs/getting-started.md`](docs/getting-started.md)。
 
 ## 怎么运作

@@ -7,7 +7,8 @@
 
 ## 现在（Phase 00–06）
 
-一个 C++17 编译器和 CMake。就这些。
+引擎本身只要一个 C++17 编译器和 CMake。对拍脚本要 Python——
+Step 024 起用 numpy，Phase 05 起用 onnxruntime。**不需要 GPU，不需要 Orin。**
 
 ```bash
 ./scripts/build_and_test.sh cpu

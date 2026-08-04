@@ -36,7 +36,9 @@ GPU 和 Jetson Orin 上跑得快的推理引擎。
 
 ## 你需要什么
 
-Phase 00–06 只需要一台能编译 C++17 的机器。**不需要 GPU，不需要 Orin。**
+Phase 00–06 在一台普通开发机上就能做完：C++17 编译器与 CMake，
+外加 Python（Step 024 起用 numpy 对拍，Phase 05 起用 onnxruntime）。
+**不需要 GPU，不需要 Orin。**
 Phase 07 开始需要 NVIDIA GPU，Phase 10 需要 Jetson Orin。
 
 ```bash
