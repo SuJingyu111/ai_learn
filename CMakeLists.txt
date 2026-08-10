@@ -121,5 +121,9 @@ if(TT_HAVE_CUDA)
   set_tests_properties(resize_cuda_parity PROPERTIES SKIP_RETURN_CODE 77)
 endif()
 
+add_executable(tt engine/apps/tt_main.cpp)
+target_link_libraries(tt PRIVATE tt_print tt_log)
+tt_warnings(tt)
+
 message(STATUS "CUDA targets enabled: ${TT_HAVE_CUDA}")
 
