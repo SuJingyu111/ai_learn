@@ -14,7 +14,8 @@ Jetson Orin 上跑得快的推理引擎。
 ./scripts/build_and_test.sh cpu
 ```
 
-跑通了就打开 [`STEPS.md`](STEPS.md)，从 Step 001 开始往下做。
+跑通了就打开 [`STEPS.md`](STEPS.md)，从 Step 001 开始往下做；完成的步骤可以在
+[`PROGRESS.md`](PROGRESS.md) 中勾选。
 
 Phase 00–06 在一台普通开发机上就能做完：C++17 编译器与 CMake，
 外加 Python（Step 024 起用 numpy 对拍，Phase 05 起用 onnxruntime）。
@@ -59,6 +60,7 @@ Phase B 同时覆盖 **GH-600** 认证的六个 domain——六域 artifact 是�
 ```text
 .
 ├── STEPS.md                 # 唯一入口：所有 phase 与 step
+├── PROGRESS.md              # 已有 step 的 checkbox 进度表
 ├── steps/                   # 步骤文件
 ├── engine/                  # 你写的引擎：唯一的、持续演进的工件
 │   ├── include/ src/ tests/ apps/ bench/
