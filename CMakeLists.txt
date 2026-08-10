@@ -33,6 +33,12 @@ add_library(tt_log engine/src/tt/log.cpp)
 target_include_directories(tt_log PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
 tt_warnings(tt_log)
 
+# Console output, kept a separate target from tt_log so that depending on one
+# never drags in the other: they are different jobs, not two halves of one.
+add_library(tt_print engine/src/tt/print.cpp)
+target_include_directories(tt_print PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
+tt_warnings(tt_print)
+
 set(TT_HAVE_CUDA OFF)
 if(ENABLE_CUDA)
   include(CheckLanguage)
@@ -62,6 +68,10 @@ if(TT_HAVE_CUDA)
   target_link_libraries(resize_demo PRIVATE tt_cuda)
 endif()
 
+add_executable(log_demo engine/apps/log_demo.cpp)
+target_link_libraries(log_demo PRIVATE tt_log tt_print)
+tt_warnings(log_demo)
+
 add_executable(resize_benchmark engine/bench/benchmark_resize.cpp)
 target_link_libraries(resize_benchmark PRIVATE tt_cpu)
 tt_warnings(resize_benchmark)
@@ -88,6 +98,11 @@ add_test(NAME log_levels COMMAND log_tests)
 # The suite re-executes itself with TT_LOG_LEVEL set, which the environment
 # read at start-up would otherwise mask.
 set_tests_properties(log_levels PROPERTIES ENVIRONMENT "TT_LOG_LEVEL=")
+
+add_executable(print_tests engine/tests/test_print.cpp)
+target_link_libraries(print_tests PRIVATE tt_print tt_log)
+tt_warnings(print_tests)
+add_test(NAME console_print COMMAND print_tests)
 
 if(TT_HAVE_CUDA)
   # The CPU reference is the oracle for the CUDA kernel. Without this target
