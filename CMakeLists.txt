@@ -27,6 +27,12 @@ add_library(tt_cpu engine/src/cpu/resize_cpu.cpp)
 target_include_directories(tt_cpu PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
 tt_warnings(tt_cpu)
 
+# The engine's levelled logger. Kept free of every other engine target so any
+# layer, including the CUDA one, can depend on it without creating a cycle.
+add_library(tt_log engine/src/tt/log.cpp)
+target_include_directories(tt_log PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
+tt_warnings(tt_log)
+
 set(TT_HAVE_CUDA OFF)
 if(ENABLE_CUDA)
   include(CheckLanguage)
@@ -74,6 +80,14 @@ target_link_libraries(resize_tests PRIVATE tt_cpu)
 target_include_directories(resize_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/tests)
 tt_warnings(resize_tests)
 add_test(NAME resize_correctness COMMAND resize_tests)
+
+add_executable(log_tests engine/tests/test_log.cpp)
+target_link_libraries(log_tests PRIVATE tt_log)
+tt_warnings(log_tests)
+add_test(NAME log_levels COMMAND log_tests)
+# The suite re-executes itself with TT_LOG_LEVEL set, which the environment
+# read at start-up would otherwise mask.
+set_tests_properties(log_levels PROPERTIES ENVIRONMENT "TT_LOG_LEVEL=")
 
 if(TT_HAVE_CUDA)
   # The CPU reference is the oracle for the CUDA kernel. Without this target
