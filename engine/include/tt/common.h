@@ -15,3 +15,11 @@
 #else
 #define TT_PRINTF_FORMAT(format_index, first_argument_index)
 #endif
+
+enum class Status
+{
+  SUCCESS     = 0,
+  EFAIL       = 1,
+  EWRONGPARAM = 2,
+  EFATAL      = 3
+};

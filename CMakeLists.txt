@@ -39,6 +39,15 @@ add_library(tt_print engine/src/tt/print.cpp)
 target_include_directories(tt_print PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
 tt_warnings(tt_print)
 
+add_library(tt_shape engine/src/tt/shape.cpp)
+target_include_directories(tt_shape PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
+if(MSVC)
+  target_compile_options(tt_shape PRIVATE /EHs-c-)
+else()
+  target_compile_options(tt_shape PRIVATE -fno-exceptions)
+endif()
+tt_warnings(tt_shape)
+
 set(TT_HAVE_CUDA OFF)
 if(ENABLE_CUDA)
   include(CheckLanguage)
@@ -122,8 +131,7 @@ if(TT_HAVE_CUDA)
 endif()
 
 add_executable(tt engine/apps/tt_main.cpp)
-target_link_libraries(tt PRIVATE tt_print tt_log)
+target_link_libraries(tt PRIVATE tt_print tt_log tt_shape)
 tt_warnings(tt)
 
 message(STATUS "CUDA targets enabled: ${TT_HAVE_CUDA}")
-
