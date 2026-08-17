@@ -6,8 +6,8 @@
 ## Phase 00 — Tensor
 
 - [x] [Step 001 — 一个能编译的空引擎与 `tt` 命令行](steps/phase-00-tensor/step-001.md)
-- [ ] [Step 002 — `Shape`：rank、维度、元素总数](steps/phase-00-tensor/step-002.md)
-- [ ] [Step 003 — `DType`：字节宽度与类型标签](steps/phase-00-tensor/step-003.md)
+- [x] [Step 002 — `Shape`：rank、维度、元素总数](steps/phase-00-tensor/step-002.md)
+- [x] [Step 003 — `DType`：字节宽度与类型标签](steps/phase-00-tensor/step-003.md)
 - [ ] [Step 004 — `Storage`：一块带引用计数的裸内存](steps/phase-00-tensor/step-004.md)
 - [ ] [Step 005 — `Tensor` = storage + shape + dtype + offset](steps/phase-00-tensor/step-005.md)
 - [ ] [Step 006 — row-major strides 与 flat offset 公式](steps/phase-00-tensor/step-006.md)

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common.h"
-#include <vector>
 
 TT_NAMESPACE_BEGIN
 

@@ -3,10 +3,14 @@
 #include "tt/print.h"
 #include "tt/log.h"
 #include "tt/shape.h"
+#include "tt/dtype.h"
 #include <string_view>
 #include <iostream>
 
+using namespace std;
+
 void shape_demo();
+void dtype_demo();
 
 int main(int argc, char* argv[])
 {
@@ -26,6 +30,10 @@ int main(int argc, char* argv[])
     else if (command == "shape-demo")
     {
         shape_demo();
+    }
+    else if (command == "dtype-demo")
+    {
+        dtype_demo();
     }
     else
     {
@@ -70,4 +78,26 @@ void shape_demo()
     d.Print();
     d.numel(numel);
     tt::println("rank=%d, numel=%llu", d.rank(), numel);
+}
+
+void dtype_demo()
+{
+    uint32_t nSize;
+    string strName;
+
+    tt::dtype_size(tt::Dtype::F32, nSize);
+    tt::dtype_name(tt::Dtype::F32, strName);
+    tt::println("%s, size=%d", strName.c_str(), nSize);
+
+    tt::dtype_size(tt::Dtype::I64, nSize);
+    tt::dtype_name(tt::Dtype::I64, strName);
+    tt::println("%s, size=%d", strName.c_str(), nSize);
+
+    tt::dtype_size(tt::Dtype::I32, nSize);
+    tt::dtype_name(tt::Dtype::I32, strName);
+    tt::println("%s, size=%d", strName.c_str(), nSize);
+
+    tt::dtype_size(tt::Dtype::U8, nSize);
+    tt::dtype_name(tt::Dtype::U8, strName);
+    tt::println("%s, size=%d", strName.c_str(), nSize);
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #define TT_NAMESPACE_BEGIN namespace tt {
 #define TT_NAMESPACE_END }
 
